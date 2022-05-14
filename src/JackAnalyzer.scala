@@ -13,16 +13,26 @@ object JackAnalyzer {
     else {
       jackFiles = handelFile(obj)
     }
-    for (jaFi <- jackFiles) {
-      val nameOfJaFile = jaFi.getName.substring(jaFi.getName.lastIndexOf("\\"), jaFi.getName.lastIndexOf("."))
+    for (currentJackFile <- jackFiles) {
+      val nameOfJaFile = currentJackFile.getName.substring(currentJackFile.getName.lastIndexOf("\\"), currentJackFile.getName.lastIndexOf("."))
       val treeOutputFile = "My_" + nameOfJaFile + ".xml"
-      val tokenOutputFile="My_" + nameOfJaFile + "T.xml"
-      val parent=jaFi.getParent
+      val tokenOutputFile = "My_" + nameOfJaFile + "T.xml"
+      val parent = currentJackFile.getParent
+
+      val outFile: File = new File(parent, treeOutputFile)
+      val outTokenFile: File = new File(parent, tokenOutputFile)
+
+      val compilationEngine = new CompilationEngine(currentJackFile, outFile, outTokenFile)
+      compilationEngine.compileClass()
+
+      println("File created :" + treeOutputFile)
+      println("File created : " + tokenOutputFile)
+
     }
 
     def handelFile(dir: File): List[File] = {
       if (!dir.getName.endsWith(".jack")) {
-        throw new Exception("mising files!!!")
+        throw new Exception("missing files!!!")
       }
       List(dir)
     }
