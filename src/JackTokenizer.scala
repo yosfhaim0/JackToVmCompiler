@@ -81,47 +81,23 @@ class JackTokenizer(inFile: File) {
   }
 
   def keyword(): KEYWORD = {
-    if (currentTokenType == TYPE.KEYWORD) {
-      keywordMap(currentToken)
-    } else {
-      throw new Exception("You are looking for a specific KeyWord but it is not a keyword at all !! ")
-    }
+    keywordMap(currentToken)
   }
 
   def symbol(): Char = {
-    //if (currentTokenType == TYPE.SYMBOL) {
-    try {
-      currentToken.asInstanceOf[Char]
-    } catch {
-      case i: _ => throw new Exception("You are looking for a specific Symbol but it is not a symbol at all !! ")
-    }
+    currentToken.asInstanceOf[Char]
   }
 
   def identifier(): String = {
-    //if (currentTokenType == TYPE.INT_CONST) {
-    try {
-      currentToken
-    } catch {
-      case i: _ => throw new Exception(s"You are looking for a specific identifier but it is not a identifier at all !! ")
-    }
+    currentToken
   }
 
   def intVal(): Int = {
-    //if (currentTokenType == TYPE.INT_CONST) {
-    try {
-      currentToken.asInstanceOf[Int]
-    } catch {
-      case i: _ => throw new Exception(s"You are looking for a specific INT_CONST but it is not a INT_CONST at all !! ")
-    }
+    currentToken.asInstanceOf[Int]
   }
 
-  def stringVal(): Int = {
-    //if (currentTokenType == TYPE.INT_CONST) {
-    try {
-      currentToken.asInstanceOf[Int]
-    } catch {
-      case i: _ => throw new Exception(s"You are looking for a specific INT_CONST but it is not a INT_CONST at all !! ")
-    }
+  def stringVal(): String = {
+    currentToken.substring(1, currentToken.length)
   }
 
 

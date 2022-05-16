@@ -14,6 +14,7 @@ class xmlWriter(outFile: File, outTokenFile: File) extends Writer {
 
   def writeTokenTag(ty: TYPE, bodyTag: String): Unit = {
     val nameTag: String = ty.toString.toLowerCase()
+    
     val CurrentTag: String = s"<$nameTag> $bodyTag </$nameTag>"
     printWriter.print(s"$CurrentTag\n")
     tokensPrintWriter.print(s"$CurrentTag\n")
@@ -27,5 +28,7 @@ class xmlWriter(outFile: File, outTokenFile: File) extends Writer {
   override def closeClass(): Unit = {
     tokensPrintWriter.println("</tokens>")
     printWriter.println("</class>")
+    tokensPrintWriter.close()
+    printWriter.close()
   }
 }
