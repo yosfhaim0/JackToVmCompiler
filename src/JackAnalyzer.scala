@@ -1,5 +1,6 @@
 import java.io.{File, FileWriter}
 import java.util
+import javax.sql.rowset.spi.XmlWriter
 
 object JackAnalyzer {
 
@@ -14,7 +15,7 @@ object JackAnalyzer {
       jackFiles = handelFile(obj)
     }
     for (currentJackFile <- jackFiles) {
-      val nameOfJaFile = currentJackFile.getName.substring(currentJackFile.getName.lastIndexOf("\\"), currentJackFile.getName.lastIndexOf("."))
+      val nameOfJaFile = currentJackFile.toString.substring(currentJackFile.toString.lastIndexOf("\\") + 1, currentJackFile.toString.lastIndexOf("."))
       val treeOutputFile = "My_" + nameOfJaFile + ".xml"
       val tokenOutputFile = "My_" + nameOfJaFile + "T.xml"
       val parent = currentJackFile.getParent
@@ -22,7 +23,9 @@ object JackAnalyzer {
       val outFile: File = new File(parent, treeOutputFile)
       val outTokenFile: File = new File(parent, tokenOutputFile)
 
-      val compilationEngine = new CompilationEngine(currentJackFile, outFile, outTokenFile)
+      val writerInc: Writer = new xmlWriter(outFile, outTokenFile)
+
+      val compilationEngine = new CompilationEngine(currentJackFile, writerInc)
       compilationEngine.compileClass()
 
       println("File created :" + treeOutputFile)
