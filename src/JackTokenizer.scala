@@ -36,6 +36,7 @@ class JackTokenizer(inFile: File) {
     JackString += i + "\n"
   }
   JackString = noComments(JackString)
+  JackString = noBlockOfComments(JackString)
   val MatchsFromJackString = tokenPatterns.findAllMatchIn(JackString)
   for (i <- MatchsFromJackString) {
     tokens.add(i.toString())
@@ -103,5 +104,9 @@ class JackTokenizer(inFile: File) {
 
   def noComments(strIn: String): String = {
     strIn.replaceAll("""\/\*.+?\*\/|\/\/.*(?=[\n\r])""", "").trim()
+  }
+
+  def noBlockOfComments(strIn: String): String = {
+    strIn.replaceAll("""\/\*(?:[^\*]|\**[^\*\/])*\*+\/""", "").trim()
   }
 }
