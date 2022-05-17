@@ -19,10 +19,20 @@ class CompilationEngine(JackFile: File, wri: Writer) {
     if (ty != TYPE.IDENTIFIER) {
       error("class name")
     }
-    writer.writeTokenTag(ty, tokenizer.getToken())
+    writeToken()
     requireSymbol("{")
-    compileClassVarDec()
-    compileSubroutineDec()
+    tokenizer.advance()
+    while (!List(KEYWORD.CONSTRUCTOR, KEYWORD.FUNCTION, KEYWORD.METHOD).contains(tokenizer.keyword())) {
+      tokenizer.pointerBack()
+      compileClassVarDec()
+      tokenizer.advance()
+    }
+    while (tokenizer.getToken() != "}") {
+      tokenizer.pointerBack()
+      compileSubroutineDec()
+      tokenizer.advance()
+    }
+    tokenizer.pointerBack()
     requireSymbol("}")
     if (tokenizer.hasMoreTokens()) {
       throw new IllegalStateException("Unexpected Exception")
@@ -40,38 +50,27 @@ class CompilationEngine(JackFile: File, wri: Writer) {
     if (tokenizer.getTokenType() != TYPE.KEYWORD) {
       error("keyword")
     }
-
-    if (List(KEYWORD.CONSTRUCTOR, KEYWORD.FUNCTION, KEYWORD.METHOD).contains(tokenizer.keyword())) {
-      tokenizer.pointerBack()
-      return
-    }
     writer.openTag("classVarDec")
     if (!List(KEYWORD.STATIC, KEYWORD.FIELD).contains(tokenizer.keyword())) {
       error("static or field")
     }
-    writeToken()
+    writeToken() //static or field
     tokenizer.advance()
-    writeToken()
-    while (true) {
-      //varName
-      tokenizer.advance()
-      if (tokenizer.getTokenType() != TYPE.IDENTIFIER) {
-        error("identifier")
-      }
-      writeToken()
-      //',' or ';'
-      tokenizer.advance()
-      val symbol: Char = tokenizer.symbol()
-      if (tokenizer.getTokenType() != TYPE.SYMBOL || !List(',', ';').contains(symbol)) {
-        error("',' or ';'")
-      }
-      writer.writeTokenTag(tokenizer.getTokenType(), symbol.asInstanceOf[String])
-      if (tokenizer.symbol() == ';') {
-        break
+    writeToken() //type
+    tokenizer.advance()
+    while (tokenizer.getTokenType() == TYPE.IDENTIFIER) {
+      writeToken() //varName
+      tokenizer.advance() //',' or ';'
+      if (tokenizer.getToken() == ",") {
+        writeToken()
+        tokenizer.advance()
+      } else {
+        writeToken()
+        writer.closeTag("classVarDec")
+        return
       }
     }
     writer.closeTag("classVarDec")
-    compileClassVarDec()
   }
 
 
@@ -85,7 +84,7 @@ class CompilationEngine(JackFile: File, wri: Writer) {
     if (!List(KEYWORD.CONSTRUCTOR, KEYWORD.METHOD, KEYWORD.FUNCTION).contains(tokenizer.keyword())) {
       error("SubroutineDec")
     }
-    writer.openTag("SubroutineDec")
+    writer.openTag("subroutineDec")
     writeToken()
     tokenizer.advance()
     if (tokenizer.getToken() != "void") {
@@ -117,7 +116,8 @@ class CompilationEngine(JackFile: File, wri: Writer) {
     tokenizer.advance()
     writeToken() //name of param
     tokenizer.advance()
-    while (tokenizer.getToken() != ")") {
+    while (tokenizer.getToken() == ",") {
+      tokenizer.pointerBack()
       requireSymbol(",")
       tokenizer.advance()
       writeToken() //type of param
@@ -132,8 +132,10 @@ class CompilationEngine(JackFile: File, wri: Writer) {
   def compileSubroutineBody(): Unit = {
     writer.openTag("subroutineBody")
     requireSymbol("{") //includ advance
+    tokenizer.advance()
     while (!List("let", "while", "if", "do", "return").contains(tokenizer.getToken())) {
       //follow of varDec ==first of Statements
+      tokenizer.pointerBack()
       compileVarDec()
       tokenizer.advance()
     }
@@ -144,6 +146,7 @@ class CompilationEngine(JackFile: File, wri: Writer) {
   }
 
   def compileVarDec(): Unit = {
+    writer.openTag("varDec")
     tokenizer.advance()
     writeToken() //"var"
     tokenizer.advance()
@@ -158,12 +161,14 @@ class CompilationEngine(JackFile: File, wri: Writer) {
       tokenizer.advance()
     }
     writeToken() //";"
+    writer.closeTag("varDec")
+
   }
 
   def compileStatements(): Unit = {
     writer.openTag("statements")
-    while (true) {
-      tokenizer.advance()
+    tokenizer.advance()
+    while (tokenizer.getToken() != "}") {
       tokenizer.getToken() match {
         //this 5 cases not need tokenizer.advance() in start of func
         case "let" => compileLet()
@@ -171,13 +176,13 @@ class CompilationEngine(JackFile: File, wri: Writer) {
         case "while" => compileWhile()
         case "do" => compileDo()
         case "return" => compileReturn()
-        case "}" => {
-          tokenizer.pointerBack()
+        case _ => tokenizer.pointerBack()
           writer.closeTag("statements")
           return
-        }
       }
+      tokenizer.advance()
     }
+    tokenizer.pointerBack()
     writer.closeTag("statements")
   }
 
@@ -191,6 +196,7 @@ class CompilationEngine(JackFile: File, wri: Writer) {
       writeToken()
       compileExpression()
     } else {
+      tokenizer.pointerBack()
       requireSymbol("=")
       compileExpression()
       requireSymbol(";")
@@ -256,6 +262,7 @@ class CompilationEngine(JackFile: File, wri: Writer) {
       compileExpressionList()
       requireSymbol(")")
     }
+    requireSymbol(";")
     writer.closeTag("doStatement")
   }
 
@@ -296,28 +303,64 @@ class CompilationEngine(JackFile: File, wri: Writer) {
     }
     else if (tokenizer.getTokenType() == TYPE.STRING_CONST) {
       writeConstStringToken()
-    } else if (tokenizer.getTokenType() == TYPE.KEYWORD) {
+    } else if (List("true", "false", "null", "this").contains(tokenizer.getToken())) {
       writeToken()
+    } else if (tokenizer.getToken() == "(") {
+      writeToken()
+      compileExpression()
+      requireSymbol(")")
+    } else if (tokenizer.getToken() == "-" || tokenizer.getToken() == "~") {
+      writeToken()
+      compileTerm()
     } else if (tokenizer.getTokenType() == TYPE.IDENTIFIER) {
       writeToken()
       tokenizer.advance()
-      if (tokenizer.getToken()=="["){
-        writeToken()
-        compileExpression()
-        requireSymbol("]")
-      }//todo!!!!!!!!!!!!
+      tokenizer.getToken() match {
+        case "[" =>
+          writeToken()
+          compileExpression()
+          requireSymbol("]")
+        case "(" =>
+          writeToken()
+          compileExpressionList()
+          requireSymbol(")")
+        case "." =>
+          writeToken()
+          tokenizer.advance()
+          writeToken() //subrotion Name
+          requireSymbol("(")
+          compileExpressionList()
+          requireSymbol(")")
+        case _ =>
+          tokenizer.pointerBack()
+      }
     }
-
     writer.closeTag("term")
-
   }
+
 
   def compileExpressionList(): Unit = {
-
+    writer.openTag("expressionList")
+    tokenizer.advance()
+    if (tokenizer.getToken() == ")") {
+      tokenizer.pointerBack()
+      writer.closeTag("expressionList")
+      return
+    }
+    if (List(TYPE.INT_CONST, TYPE.STRING_CONST, TYPE.IDENTIFIER).contains(tokenizer.getTokenType()) ||
+      List("true", "false", "null", "this", "(", "-", "~").contains(tokenizer.getToken())) {
+      tokenizer.pointerBack()
+      compileExpression()
+    }
+    tokenizer.advance()
+    while (tokenizer.getToken() == ",") {
+      writeToken()
+      compileExpression()
+      tokenizer.advance()
+    }
+    tokenizer.pointerBack()
+    writer.closeTag("expressionList")
   }
-
-
-
 
   //help function
 

@@ -26,7 +26,12 @@ object JackAnalyzer {
       val writerInc: Writer = new xmlWriter(outFile, outTokenFile)
 
       val compilationEngine = new CompilationEngine(currentJackFile, writerInc)
-      compilationEngine.compileClass()
+      try {
+        compilationEngine.compileClass()
+      }
+      catch {
+        case _ => writerInc.closeClass()
+      }
 
       println("File created :" + treeOutputFile)
       println("File created : " + tokenOutputFile)

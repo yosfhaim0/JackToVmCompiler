@@ -85,7 +85,7 @@ class JackTokenizer(inFile: File) {
   }
 
   def symbol(): Char = {
-    currentToken.asInstanceOf[Char]
+    currentToken.toCharArray.head
   }
 
   def identifier(): String = {
@@ -97,7 +97,7 @@ class JackTokenizer(inFile: File) {
   }
 
   def stringVal(): String = {
-    currentToken.substring(1, currentToken.length)
+    currentToken.substring(1, currentToken.length - 1)
   }
 
 
