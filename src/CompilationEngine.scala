@@ -5,6 +5,7 @@ import scala.util.control.Breaks.break
 class CompilationEngine(JackFile: File, wri: Writer) {
   val tokenizer: JackTokenizer = new JackTokenizer(JackFile)
   val writer: Writer = wri
+  var symbolTable = new SymbolTable
 
   def compileClass(): Unit = {
     tokenizer.advance()

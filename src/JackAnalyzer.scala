@@ -18,14 +18,19 @@ object JackAnalyzer {
       val nameOfJaFile = currentJackFile.toString.substring(currentJackFile.toString.lastIndexOf("\\") + 1, currentJackFile.toString.lastIndexOf("."))
       val treeOutputFile = "My_" + nameOfJaFile + ".xml"
       val tokenOutputFile = "My_" + nameOfJaFile + "T.xml"
+      val vmOutFile = "My_vm_" + nameOfJaFile + ".vm"
       val parent = currentJackFile.getParent
 
       val outFile: File = new File(parent, treeOutputFile)
       val outTokenFile: File = new File(parent, tokenOutputFile)
+      val outVmFile: File = new File(parent, vmOutFile)
 
       val writerInc: Writer = new xmlWriter(outFile, outTokenFile)
+      val VMwriterInc: Writer = new VMWriter(outVmFile)
 
       val compilationEngine = new CompilationEngine(currentJackFile, writerInc)
+      val VMcompilationEngine = new CompilationEngine(currentJackFile, VMwriterInc)
+
       try {
         compilationEngine.compileClass()
       }
@@ -33,8 +38,19 @@ object JackAnalyzer {
         case _ => writerInc.closeClass()
       }
 
+      try {
+        VMcompilationEngine.compileClass()
+      }
+      catch {
+        case _ => VMwriterInc.closeClass()
+      }
+
+
       println("File created :" + treeOutputFile)
       println("File created : " + tokenOutputFile)
+
+      println("File created : " + vmOutFile)
+
 
     }
 
