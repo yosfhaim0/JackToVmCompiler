@@ -5,8 +5,8 @@ import scala.util.matching.UnanchoredRegex
 
 
 object segment {
-  val CONST: String = "const"
-  val ARG: String = "arg"
+  val CONST: String = "constant"
+  val ARG: String = "argument"
   val LOCAL: String = "local"
   val STATIC: String = "static"
   val THIS: String = "this"
@@ -46,39 +46,50 @@ class VMWriter(outFile: File) extends Writer {
   }
 
   override def writeTokenTag(ty: TYPE, bodyTag: String): Unit = {
-    ty match {
-      case TYPE.SYMBOL => bodyTag match {
-        case "+" => printWriter.print("add")
-        case "-" => printWriter.print("sub")
-        case "*" => printWriter.print("call Math.multiply 2")
-        case "/" => printWriter.print("call Math.divide 2")
-        case "&" => printWriter.print("and")
-        case "|" => printWriter.print("or")
-        case "<" => printWriter.print("lt")
-        case ">" => printWriter.print("gt")
-        case "=" => printWriter.print("eq")
-        case _ => error("symbol")
-      }
-      case TYPE.INT_CONST =>
-      case TYPE.KEYWORD =>
-      case TYPE.NONE =>
-    }
+    //    ty match {
+    //      case TYPE.SYMBOL => bodyTag match {
+    //        case "+" => printWriter.print("add")
+    //        case "-" => printWriter.print("sub")
+    //        case "*" => printWriter.print("call Math.multiply 2")
+    //        case "/" => printWriter.print("call Math.divide 2")
+    //        case "&" => printWriter.print("and")
+    //        case "|" => printWriter.print("or")
+    //        case "<" => printWriter.print("lt")
+    //        case ">" => printWriter.print("gt")
+    //        case "=" => printWriter.print("eq")
+    //        case _ => error("symbol")
+    //      }
+    //      case TYPE.INT_CONST =>
+    //      case TYPE.KEYWORD =>
+    //      case TYPE.NONE =>
+    //    }
   }
 
   override def openClass(): Unit = {
 
   }
 
-  def writePush(segment: Segment, index: Int): Unit = {
-
+  def writePush(segment: String, index: Int): Unit = {
+    writeCommand("push", segment, index.toString)
   }
 
   def writePop(segment: String, index: Int): Unit = {
-
+    writeCommand("pop", segment, index.toString)
   }
 
   def writeAritmetic(command: String): Unit = {
-
+    command match {
+              case "+" => printWriter.print("add")
+              case "-" => printWriter.print("sub")
+              case "*" => printWriter.print("call Math.multiply 2")
+              case "/" => printWriter.print("call Math.divide 2")
+              case "&" => printWriter.print("and")
+              case "|" => printWriter.print("or")
+              case "<" => printWriter.print("lt")
+              case ">" => printWriter.print("gt")
+              case "=" => printWriter.print("eq")
+              case _ => error("symbol")
+            }
   }
 
   def writeLabel(label: String): Unit = {
@@ -94,16 +105,22 @@ class VMWriter(outFile: File) extends Writer {
   }
 
   def writeCall(name: String, nArgs: Int): Unit = {
-
+    writeCommand("call", name, nArgs.toString)
   }
 
   def writeFunction(name: String, nLocals: Int): Unit = {
-
+    writeCommand("function", name, nLocals.toString)
   }
 
   def writeReturn(): Unit = {
 
   }
+
+  def writeCommand(cmd: String, arg1: String = "", arg2: String = ""): Unit = {
+    printWriter.println(s"$cmd $arg1 $arg2")
+  }
+
+  
 
   def error(token: String): Unit = {
     printWriter.close()

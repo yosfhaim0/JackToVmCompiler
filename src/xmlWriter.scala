@@ -1,5 +1,9 @@
 import java.io.{File, PrintWriter}
 
+/**
+ * @param outFile
+ * @param outTokenFile
+ */
 class xmlWriter(outFile: File, outTokenFile: File) extends Writer {
   val printWriter: PrintWriter = new PrintWriter(outFile)
   val tokensPrintWriter: PrintWriter = new PrintWriter(outTokenFile)
@@ -46,5 +50,41 @@ class xmlWriter(outFile: File, outTokenFile: File) extends Writer {
     printWriter.println("</class>")
     tokensPrintWriter.close()
     printWriter.close()
+  }
+
+  override def writeReturn(): Unit = {
+    
+  }
+
+  override def writePush(segment: String, index: Int): Unit = {
+
+  }
+
+  override def writePop(segment: String, index: Int): Unit = {
+
+  }
+
+  override def writeAritmetic(command: String): Unit = {
+
+  }
+
+  override def writeLabel(label: String): Unit = {
+
+  }
+
+  override def writeGoto(label: String): Unit = {
+
+  }
+
+  override def writeIf(label: String): Unit = {
+
+  }
+
+  override def writeCall(name: String, nArgs: Int): Unit = {
+
+  }
+
+  override def writeFunction(name: String, nLocals: Int): Unit = {
+
   }
 }

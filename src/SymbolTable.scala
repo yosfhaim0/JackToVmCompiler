@@ -20,20 +20,20 @@ class SymbolTable {
 
   def define(name: String, typee: String, kind: String): Unit = {
     if (kind == KIND.FIELD || kind == KIND.STATIC) {
-      classLevelTableSymbols += ((name, List(typee, kind)))
+      classLevelTableSymbols += ((name -> List(typee, kind, VarCount(kind).toString)))
     } else {
-      subroutineLevelTableSymbols += (name -> List(typee, kind))
+      subroutineLevelTableSymbols += (name -> List(typee, kind, VarCount(kind).toString))
     }
   }
 
   def VarCount(kind: String): Int = {
     var sum = 0
     for ((k, v) <- classLevelTableSymbols) {
-      if (v(3) == kind)
+      if (v(1) == kind)
         sum += 1
     }
     for ((k, v) <- subroutineLevelTableSymbols) {
-      if (v(3) == kind)
+      if (v(1) == kind)
         sum += 1
     }
     sum
@@ -41,7 +41,7 @@ class SymbolTable {
 
   def KindOf(name: String): String = {
     if (subroutineLevelTableSymbols.contains(name)) {
-      return subroutineLevelTableSymbols(name)(3)
+      return subroutineLevelTableSymbols(name)(1)
     }
     KIND.NONE
   }
@@ -53,13 +53,24 @@ class SymbolTable {
     KIND.NONE
   }
 
-  def IndexOf(name: String): Unit = {
-    def TypeOf(name: String): String = {
-      if (subroutineLevelTableSymbols.contains(name)) {
-        return subroutineLevelTableSymbols(name)(3)
-      }
-      KIND.NONE
+  def IndexOf(name: String): Int = {
+    if (subroutineLevelTableSymbols.contains(name)) {
+      return subroutineLevelTableSymbols(name)(2).toInt
     }
+    if (classLevelTableSymbols.contains(name)) {
+      return classLevelTableSymbols(name)(2).toInt
+    }
+    0
+  }
+
+  def TypeOff(name: String): String = {
+    if (subroutineLevelTableSymbols.contains(name)) {
+      return subroutineLevelTableSymbols(name)(0)
+    }
+    if (classLevelTableSymbols.contains(name)) {
+      return classLevelTableSymbols(name)(0)
+    }
+    KIND.NONE
   }
 
 }

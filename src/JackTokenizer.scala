@@ -41,6 +41,8 @@ class JackTokenizer(inFile: File) {
   for (i <- MatchsFromJackString) {
     tokens.add(i.toString())
   }
+  currentToken = tokens.get(0)
+  matc(currentToken)
   //advance()
 
   def getToken(): String = {
@@ -53,20 +55,25 @@ class JackTokenizer(inFile: File) {
 
   def advance(): Unit = {
     if (hasMoreTokens()) {
-      currentToken = tokens.get(pointer)
       pointer += 1
+      currentToken = tokens.get(pointer)
     } else {
       throw new IllegalStateException("No more tokens")
     }
-    if (symbolReg.matches(currentToken)) {
+    matc(currentToken)
+
+  }
+
+  def matc(current: String): Unit = {
+    if (symbolReg.matches(current)) {
       currentTokenType = TYPE.SYMBOL
-    } else if (keywordReg.matches(currentToken)) {
+    } else if (keywordReg.matches(current)) {
       currentTokenType = TYPE.KEYWORD
-    } else if (intReg.matches(currentToken)) {
+    } else if (intReg.matches(current)) {
       currentTokenType = TYPE.INT_CONST
-    } else if (strReg.matches(currentToken)) {
+    } else if (strReg.matches(current)) {
       currentTokenType = TYPE.STRING_CONST
-    } else if (idReg.matches(currentToken)) {
+    } else if (idReg.matches(current)) {
       currentTokenType = TYPE.IDENTIFIER
     } else {
       throw new IllegalArgumentException("Unknown token: $currentToken")

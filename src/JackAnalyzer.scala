@@ -39,7 +39,7 @@ object JackAnalyzer {
       }
 
       try {
-        VMcompilationEngine.compileClass()
+        //VMcompilationEngine.compileClass()
       }
       catch {
         case _ => VMwriterInc.closeClass()
