@@ -28,6 +28,12 @@ object command {
 
 }
 
+val commands: Map[String, String] = Map("+" -> "add", "-" -> "sub",
+  "neg" -> "neg",
+  "*" -> "call Math.multiply 2", "/" -> "call Math.divide 2",
+  "&" -> "and", "|" -> "or", "<" -> "lt",
+  ">" -> "gt", "=" -> "eq", "~" -> "not")
+
 class VMWriter(outFile: File) extends Writer {
   val printWriter: PrintWriter = new PrintWriter(outFile)
 
@@ -78,30 +84,19 @@ class VMWriter(outFile: File) extends Writer {
   }
 
   def writeAritmetic(command: String): Unit = {
-    command match {
-              case "+" => printWriter.print("add")
-              case "-" => printWriter.print("sub")
-              case "*" => printWriter.print("call Math.multiply 2")
-              case "/" => printWriter.print("call Math.divide 2")
-              case "&" => printWriter.print("and")
-              case "|" => printWriter.print("or")
-              case "<" => printWriter.print("lt")
-              case ">" => printWriter.print("gt")
-              case "=" => printWriter.print("eq")
-              case _ => error("symbol")
-            }
+    writeCommand(commands(command))
   }
 
   def writeLabel(label: String): Unit = {
-
+    printWriter.println(s"label $label")
   }
 
   def writeGoto(label: String): Unit = {
-
+    printWriter.println(s"goto $label")
   }
 
   def writeIf(label: String): Unit = {
-
+    printWriter.println(s"if-goto $label")
   }
 
   def writeCall(name: String, nArgs: Int): Unit = {
@@ -113,14 +108,13 @@ class VMWriter(outFile: File) extends Writer {
   }
 
   def writeReturn(): Unit = {
-
+    printWriter.println("return")
   }
 
   def writeCommand(cmd: String, arg1: String = "", arg2: String = ""): Unit = {
     printWriter.println(s"$cmd $arg1 $arg2")
   }
 
-  
 
   def error(token: String): Unit = {
     printWriter.close()

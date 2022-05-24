@@ -43,6 +43,9 @@ class SymbolTable {
     if (subroutineLevelTableSymbols.contains(name)) {
       return subroutineLevelTableSymbols(name)(1)
     }
+    if (classLevelTableSymbols.contains(name)) {
+      return classLevelTableSymbols(name)(1)
+    }
     KIND.NONE
   }
 
@@ -74,25 +77,3 @@ class SymbolTable {
   }
 
 }
-//class rowInTable {
-//  var typ: String
-//  var kind: KIND
-//  var index: Int
-//}
-//
-//// a two-arg constructor
-//def apply(typ: String, kind: KIND): rowInTable = {
-//  val row = new rowInTable
-//  row.typ = typ
-//  row.kind = kind
-//  row
-//}
-//
-//// a two-arg constructor
-//def apply(typ: String, kind: KIND, index: Int): rowInTable = {
-//  val row = new rowInTable
-//  row.typ = typ
-//  row.kind = kind
-//  row.index = index
-//  row
-//}

@@ -101,7 +101,7 @@ class JackTokenizer(inFile: File) {
   }
 
   def intVal(): Int = {
-    currentToken.asInstanceOf[Int]
+    currentToken.toInt
   }
 
   def stringVal(): String = {
