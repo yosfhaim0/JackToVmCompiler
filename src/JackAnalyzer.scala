@@ -18,7 +18,7 @@ object JackAnalyzer {
       val nameOfJaFile = currentJackFile.toString.substring(currentJackFile.toString.lastIndexOf("\\") + 1, currentJackFile.toString.lastIndexOf("."))
       val treeOutputFile = "My_" + nameOfJaFile + ".xml"
       val tokenOutputFile = "My_" + nameOfJaFile + "T.xml"
-      val vmOutFile = "My_vm_" + nameOfJaFile + ".vm"
+      val vmOutFile =  nameOfJaFile + ".vm"
       val parent = currentJackFile.getParent
 
       //val outFile: File = new File(parent, treeOutputFile)
@@ -60,6 +60,7 @@ object JackAnalyzer {
       }
       List(dir)
     }
+
 
     def handleDirectory(dir: File): List[File] = {
       val ret = dir.listFiles.filter(_.isFile).toList.filter(p => p.toString.endsWith(".jack"))

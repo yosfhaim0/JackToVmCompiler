@@ -4,7 +4,7 @@ import scala.collection.Map
 import scala.util.matching.UnanchoredRegex
 
 
-object segment {
+object SEGMENT {
   val CONST: String = "constant"
   val ARG: String = "argument"
   val LOCAL: String = "local"
@@ -15,7 +15,7 @@ object segment {
   val TEMP: String = "temp"
 }
 
-object command {
+object COMMAND {
   val ADD: String = "add"
   val SUB: String = "sub"
   val NEG: String = "neg"
@@ -42,37 +42,15 @@ class VMWriter(outFile: File) extends Writer {
   }
 
   override def openTag(string: String): Unit = {
-    string match {
-      case _ =>
-    }
   }
 
   override def closeTag(string: String): Unit = {
-
   }
 
   override def writeTokenTag(ty: TYPE, bodyTag: String): Unit = {
-    //    ty match {
-    //      case TYPE.SYMBOL => bodyTag match {
-    //        case "+" => printWriter.print("add")
-    //        case "-" => printWriter.print("sub")
-    //        case "*" => printWriter.print("call Math.multiply 2")
-    //        case "/" => printWriter.print("call Math.divide 2")
-    //        case "&" => printWriter.print("and")
-    //        case "|" => printWriter.print("or")
-    //        case "<" => printWriter.print("lt")
-    //        case ">" => printWriter.print("gt")
-    //        case "=" => printWriter.print("eq")
-    //        case _ => error("symbol")
-    //      }
-    //      case TYPE.INT_CONST =>
-    //      case TYPE.KEYWORD =>
-    //      case TYPE.NONE =>
-    //    }
   }
 
   override def openClass(): Unit = {
-
   }
 
   def writePush(segment: String, index: Int): Unit = {
