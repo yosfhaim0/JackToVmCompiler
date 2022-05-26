@@ -1,6 +1,8 @@
 import scala.collection.Map
 
-
+/**
+ * name space in VM language
+ */
 object KIND {
   val STATIC: String = "static"
   val FIELD: String = "field"
@@ -9,8 +11,13 @@ object KIND {
   val NONE: String = "NONE"
 }
 
-//List(typee, kind,index)
+/**
+ * manage each var which scope he declaration and where exactly he reachable
+ */
 class SymbolTable {
+  /**
+   * name->List(typee, kind,index)
+   */
   val classLevelTableSymbols = scala.collection.mutable.Map[String, List[String]]()
   val subroutineLevelTableSymbols = scala.collection.mutable.Map[String, List[String]]()
 

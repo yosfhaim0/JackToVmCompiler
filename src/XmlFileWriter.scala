@@ -4,7 +4,7 @@ import java.io.{File, PrintWriter}
  * @param outFile
  * @param outTokenFile
  */
-class xmlWriter(outFile: File, outTokenFile: File) extends Writer {
+class XmlFileWriter(outFile: File, outTokenFile: File) extends Writer {
   val printWriter: PrintWriter = new PrintWriter(outFile)
   val tokensPrintWriter: PrintWriter = new PrintWriter(outTokenFile)
 
