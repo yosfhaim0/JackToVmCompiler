@@ -50,7 +50,7 @@ class JackTokenizer(inFile: File) {
   }
 
   def hasMoreTokens(): Boolean = {
-    pointer < tokens.size()
+    pointer <= tokens.size()-2
   }
 
   def advance(): Unit = {

@@ -31,23 +31,12 @@ object JackAnalyzer {
       val compilationEngine = new CompilationEngine(currentJackFile, writerInc)
       val VMcompilationEngine = new CompilationEngine(currentJackFile, VMwriterInc)
 
-      try {
-        compilationEngine.compileClass()
-      }
-      catch {
-        case _ => writerInc.closeClass()
-      }
+      compilationEngine.compileClass()
 
-      try {
-        VMcompilationEngine.compileClass()
-      }
-      catch {
-        case _ => VMwriterInc.closeClass()
-      }
+      VMcompilationEngine.compileClass()
 
-
-      println("File created :" + treeOutputFile)
-      println("File created : " + tokenOutputFile)
+            println("File created :" + treeOutputFile)
+            println("File created : " + tokenOutputFile)
 
       println("File created : " + vmOutFile)
 

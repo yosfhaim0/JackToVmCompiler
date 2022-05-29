@@ -49,10 +49,10 @@ class CompilationEngine(JackFile: File, wri: Writer) {
       symbolTable.startSubroutine()
       compileSubroutineDec()
     }
-    requireSymbol("}")
-    if (tokenizer.hasMoreTokens()) {
+    if(tokenizer.getToken()!="}"){
       throw new IllegalStateException("Unexpected Exception")
     }
+    writer.writeTokenTag(tokenizer.getTokenType(), tokenizer.getToken())//"}"
     writer.closeClass()
   }
 
