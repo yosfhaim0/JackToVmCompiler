@@ -39,9 +39,8 @@ class CompilationEngine(JackFile: File, wri: Writer) {
 
   def compileClass(): Unit = {
     writer.openClass()
-    writeToken()
-    currentClass = tokenizer.getToken()
-    writeToken()
+    writeToken()//"class"
+    currentClass = writeToken()
     requireSymbol("{")
     while (!List(KEYWORD.CONSTRUCTOR, KEYWORD.FUNCTION, KEYWORD.METHOD).contains(tokenizer.keyword())) {
       compileClassVarDec()
@@ -68,7 +67,7 @@ class CompilationEngine(JackFile: File, wri: Writer) {
     var name = writeToken()
     symbolTable.define(name, typee, staticOrField)
     while (tokenizer.getToken() != ";") {
-      writeToken()
+      writeToken()//","
       name = writeToken() //varName
       symbolTable.define(name, typee, staticOrField)
     }
@@ -290,12 +289,10 @@ class CompilationEngine(JackFile: File, wri: Writer) {
       writer.writePush(SEGMENT.POINTER, 0)
       val symbolType = symbolTable.TypeOff(name)
       nArgs = 1
-      //writer.writePush(getSegment(symbolTable.KindOf(name)), symbolTable.IndexOf(name))
-      //subrotineOrClass = s"${symbolTable.TypeOff(subrotineOrClass)}"
       nArgs += compileExpressionList()
       requireSymbol(")")
       writer.writeCall(currentClass + "." + name, nArgs)
-      //writer.writePop(segment.TEMP, 0)
+
     } else { //"."
       writeToken()
       val nameOfSubrotine = writeToken() //subrotion Name
@@ -309,7 +306,7 @@ class CompilationEngine(JackFile: File, wri: Writer) {
         nArgs += compileExpressionList() + 1
         requireSymbol(")")
         writer.writeCall(symbolTable.TypeOff(name) + "." + nameOfSubrotine, nArgs)
-      } //writer.writePop(segment.TEMP, 0)
+      }
     }
 
   }

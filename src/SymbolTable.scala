@@ -56,12 +56,12 @@ class SymbolTable {
     KIND.NONE
   }
 
-  def TypeOf(name: String): String = {
-    if (subroutineLevelTableSymbols.contains(name)) {
-      return subroutineLevelTableSymbols(name)(2)
-    }
-    KIND.NONE
-  }
+//  def TypeOf(name: String): String = {
+//    if (subroutineLevelTableSymbols.contains(name)) {
+//      return subroutineLevelTableSymbols(name)(2)
+//    }
+//    KIND.NONE
+//  }
 
   def IndexOf(name: String): Int = {
     if (subroutineLevelTableSymbols.contains(name)) {
